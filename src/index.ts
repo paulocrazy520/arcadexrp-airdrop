@@ -12,9 +12,9 @@ mongoose
 
 const airdrop = async (account: string, amount: number, index: number) => {
   const userInfo = await User.findOne({ accountId: account });
+  console.log("Airdrop No :", index + 1);
+  console.log("    Owner :", account);
   if (userInfo) {
-    console.log("Airdrop No :", index + 1);
-    console.log("    Owner :", account);
     await User.updateOne(
       { accountId: account },
       {
@@ -22,8 +22,16 @@ const airdrop = async (account: string, amount: number, index: number) => {
         airdropAmount: amount,
       }
     );
-    console.log("    Success!");
+  } else {
+    const newUser = new User({
+      accountId: account,
+      userName: account.slice(-6),
+      balance: amount,
+      airdropAmount: amount,
+    });
+    await newUser.save();
   }
+  console.log("    Success!");
 };
 
 let owners: string[] = [];
